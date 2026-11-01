@@ -14,9 +14,11 @@
   --color-brown: #b58a62;
   --color-brown-deep: #9a7250;
 
-  /* Typography — body uses the project font, display uses a warm serif */
+  /* Typography — body uses the project font, display uses a warm serif.
+     The inline fallbacks keep `font-sans` valid even if the Google font
+     variable is not registered in the root layout. */
   --font-sans:
-    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    var(--font-geist-sans, ui-sans-serif), system-ui, -apple-system,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-display:
     ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua",
