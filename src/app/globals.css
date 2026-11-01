@@ -1,0 +1,43 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* ------------------------------------------------------------------ */
+/* BookNook design tokens                                              */
+/* ------------------------------------------------------------------ */
+@theme inline {
+  /* Palette */
+  --color-cream: #f7f3ee;
+  --color-cream-deep: #efe8de;
+  --color-charcoal: #25231f;
+  --color-charcoal-soft: #3b3833;
+  --color-brown: #b58a62;
+  --color-brown-deep: #9a7250;
+
+  /* Typography — body uses the project font, display uses a warm serif */
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display:
+    ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua",
+    Palatino, "Times New Roman", serif;
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-charcoal);
+  }
+
+  ::selection {
+    background-color: var(--color-brown);
+    color: var(--color-charcoal);
+  }
+}
