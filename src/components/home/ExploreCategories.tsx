@@ -23,7 +23,7 @@ export default function ExploreCategories() {
     <section className="bg-white px-5 py-20">
       <div className="mx-auto max-w-7xl">
         <div className="mb-12 text-center">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-[#B58A62]">
+          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-brown">
             Find Your Interest
           </p>
 

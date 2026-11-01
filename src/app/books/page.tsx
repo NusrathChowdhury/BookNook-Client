@@ -1,9 +1,42 @@
-import React from "react";
 
-const AllBooksPage = async () => {
+import React from "react";
+import Link from "next/link";
+
+type Book = {
+  _id: string;
+  title: string;
+  author: string;
+  category: string;
+  image: string;
+  description: string;
+  userName: string;
+  userEmail: string;
+  createdAt?: string;
+};
+
+const AllBooksPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string; search?: string }>;
+}) => {
   const res = await fetch("http://localhost:5000/add-book");
-  const books = await res.json();
+  const books: Book[] = await res.json();
   console.log(books);
+
+  const { category, search } = await searchParams;
+
+  const filteredBooks = books.filter((book) => {
+    const matchesCategory =
+      !category ||
+      book.category?.toLowerCase() === category.toLowerCase();
+
+    const matchesSearch =
+      !search ||
+      book.title?.toLowerCase().includes(search.toLowerCase()) ||
+      book.author?.toLowerCase().includes(search.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <main className="min-h-screen bg-cream px-5 py-14 sm:px-8">
@@ -27,31 +60,74 @@ const AllBooksPage = async () => {
           <div className="mx-auto mt-6 h-1 w-16 rounded-full bg-brown" />
         </div>
 
+        {/* Search Books */}
+        <form
+          action="/books"
+          method="GET"
+          className="mx-auto mb-10 flex max-w-2xl flex-col gap-3 sm:flex-row"
+        >
+          {category && (
+            <input
+              type="hidden"
+              name="category"
+              value={category}
+            />
+          )}
+
+          <input
+            type="text"
+            name="search"
+            defaultValue={search || ""}
+            placeholder="Search by book title or author..."
+            className="w-full rounded-xl border border-charcoal/10 bg-white px-5 py-3 text-sm text-charcoal outline-none transition placeholder:text-charcoal/40 focus:border-brown"
+          />
+
+          <button
+            type="submit"
+            className="rounded-xl bg-charcoal px-8 py-3 text-sm font-semibold text-white transition hover:bg-brown"
+          >
+            Search
+          </button>
+        </form>
+
         {/* Book Count */}
-        <div className="mb-8 flex items-center justify-between">
-          <h2 className="font-serif text-2xl font-bold text-charcoal">
-            All Books
-          </h2>
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-serif text-2xl font-bold text-charcoal">
+              {category || "All Books"}
+            </h2>
+
+            {(category || search) && (
+              <Link
+                href="/books"
+                className="mt-2 inline-block text-sm font-medium text-brown underline underline-offset-4"
+              >
+                Clear filters
+              </Link>
+            )}
+          </div>
 
           <p className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-brown shadow-sm">
-            {books.length} Books Available
+            {filteredBooks.length} Books Available
           </p>
         </div>
 
         {/* Books Grid */}
-        {books.length === 0 ? (
+        {filteredBooks.length === 0 ? (
           <div className="rounded-2xl bg-white px-6 py-20 text-center shadow-sm">
             <h3 className="font-serif text-2xl font-bold text-charcoal">
               No Books Found
             </h3>
 
             <p className="mt-3 text-sm text-charcoal/60">
-              No books have been added yet. Be the first to share a book!
+              {search || category
+                ? "No books match your search or selected category. Try another search."
+                : "No books have been added yet. Be the first to share a book!"}
             </p>
           </div>
         ) : (
-          <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {books.map((book: any) => (
+          <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredBooks.map((book) => (
               <div
                 key={book._id}
                 className="group overflow-hidden rounded-2xl border border-charcoal/5 bg-white shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl"
@@ -97,6 +173,14 @@ const AllBooksPage = async () => {
                         : "Date unavailable"}
                     </p>
                   </div>
+
+                  {/* View Details Button */}
+                  <Link
+                    href={`/books/${book._id}`}
+                    className="mt-5 flex w-full items-center justify-center rounded-xl bg-charcoal px-5 py-3 text-sm font-semibold text-white transition duration-300 hover:bg-brown"
+                  >
+                    View Details
+                  </Link>
                 </div>
               </div>
             ))}
