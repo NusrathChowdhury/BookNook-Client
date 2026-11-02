@@ -49,8 +49,10 @@ export default function SignupPage() {
     return "";
   };
 
-  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    
 
     const error = validatePassword(password);
     setPasswordError(error);
