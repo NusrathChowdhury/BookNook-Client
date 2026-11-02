@@ -25,10 +25,7 @@ const MyBorrowsPage = () => {
   useEffect(() => {
     if (isPending) return;
 
-    if (!user?.email) {
-      setLoading(false);
-      return;
-    }
+    if (!user?.email) return;
 
     const getBorrowedBooks = async () => {
       try {
@@ -157,7 +154,7 @@ const MyBorrowsPage = () => {
             </h2>
 
             <p className="mx-auto mt-3 max-w-md text-gray-500">
-              You haven't borrowed any books yet. Explore our collection and
+              You haven&apost borrowed any books yet. Explore our collection and
               find your next favorite read.
             </p>
 

@@ -3,12 +3,13 @@
 
 import React, { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 type Book = {
   _id: string;
   title: string;
   image: string;
-  availableCopies?: number;
+  totalCopies?: number;
 };
 
 type BorrowingCardProps = {
@@ -23,22 +24,21 @@ const BorrowingCard = ({ book }: BorrowingCardProps) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const isUnavailable =
-    typeof book.availableCopies === "number" &&
-    book.availableCopies <= 0;
+  const availableCopies = book.totalCopies ?? 0;
+  const isUnavailable = availableCopies <= 0;
 
   const handleBorrow = async (
-    e: React.SubmitEvent<HTMLFormElement>
+    e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
 
     if (!user) {
-      setMessage("Please log in before borrowing a book.");
+      toast.error("Please log in before borrowing a book.");
       return;
     }
 
     if (isUnavailable) {
-      setMessage("Not Available");
+      toast.error("This book is not available.");
       return;
     }
 
@@ -83,16 +83,19 @@ const BorrowingCard = ({ book }: BorrowingCardProps) => {
 
       console.log("Borrowing successful!");
 
+      toast.success("Book borrowed successfully!");
       setMessage("Book borrowed successfully!");
       setIsOpen(false);
     } catch (error) {
       console.log("Borrow error:", error);
 
-      setMessage(
+      const errorMessage =
         error instanceof Error
           ? error.message
-          : "Something went wrong."
-      );
+          : "Something went wrong.";
+
+      setMessage(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -100,6 +103,11 @@ const BorrowingCard = ({ book }: BorrowingCardProps) => {
 
   return (
     <div>
+      {/* Available Copies */}
+      <p className="mb-3 text-sm font-semibold text-charcoal">
+        Available Copies: {availableCopies}
+      </p>
+
       {/* Borrow Button */}
       <button
         type="button"

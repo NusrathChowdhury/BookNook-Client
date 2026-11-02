@@ -14,6 +14,7 @@ type Book = {
   userName: string;
   userEmail: string;
   createdAt?: string;
+  totalCopies: number;
 };
 
 const BooksDetailsPage = async ({
@@ -154,8 +155,8 @@ const BooksDetailsPage = async ({
             </div>
 
             {/* Borrow Button */}
-<BorrowingCard book={book} />
-            
+            <BorrowingCard book={book} />
+
             <p className="mt-3 text-center text-xs text-charcoal/45">
               Borrowing will be available once the Borrow System is connected.
             </p>

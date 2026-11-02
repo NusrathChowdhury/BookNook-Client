@@ -1,7 +1,9 @@
+
 "use client";
 
 import React, { useState } from "react";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 import {
   BookOpen,
   ImagePlus,
@@ -15,8 +17,17 @@ import {
 const AddBook = () => {
   const [loading, setLoading] = useState(false);
 
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
+
   const handleAddBook = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!user) {
+      toast.error("Please log in to add a book.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -29,8 +40,10 @@ const AddBook = () => {
         category: formData.get("category"),
         image: formData.get("image"),
         description: formData.get("description"),
-        userName: formData.get("userName"),
-        userEmail: formData.get("userEmail"),
+        totalCopies: Number(formData.get("totalCopies")),
+        dateAdded: new Date().toISOString(),
+        userName: user.name,
+        userEmail: user.email,
       };
 
       const res = await fetch("http://localhost:5000/add-book", {
@@ -50,7 +63,6 @@ const AddBook = () => {
 
       toast.success("Your book has been added successfully!");
       form.reset();
-
     } catch (error) {
       toast.error("Failed to add book. Please try again.");
       console.error(error);
@@ -62,7 +74,6 @@ const AddBook = () => {
   return (
     <main className="min-h-screen bg-cream px-4 py-12 sm:px-6 lg:py-16">
       <div className="mx-auto max-w-5xl">
-
         <div className="mb-10 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brown/10 text-brown">
             <BookOpen size={28} />
@@ -83,7 +94,6 @@ const AddBook = () => {
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-charcoal/10 bg-white shadow-[0_15px_50px_rgba(37,35,31,0.06)]">
-
           <div className="border-b border-charcoal/10 bg-[#F9F6F1] px-6 py-6 sm:px-10">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brown text-white">
@@ -102,7 +112,6 @@ const AddBook = () => {
           </div>
 
           <form onSubmit={handleAddBook} className="space-y-7 p-6 sm:p-10">
-
             <div>
               <label className="mb-2 block text-sm font-semibold text-charcoal">
                 Book Title <span className="text-brown">*</span>
@@ -157,6 +166,26 @@ const AddBook = () => {
 
             <div>
               <label className="mb-2 block text-sm font-semibold text-charcoal">
+                Total Copies <span className="text-brown">*</span>
+              </label>
+
+              <input
+                type="number"
+                name="totalCopies"
+                min="1"
+                step="1"
+                placeholder="Enter number of available copies"
+                required
+                className="w-full rounded-xl border border-charcoal/15 bg-cream/30 px-4 py-3.5 text-sm text-charcoal outline-none transition placeholder:text-charcoal/35 focus:border-brown focus:ring-2 focus:ring-brown/10"
+              />
+
+              <p className="mt-2 text-xs text-charcoal/50">
+                Enter how many copies of this book are available to borrow.
+              </p>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-charcoal">
                 Book Cover Image URL <span className="text-brown">*</span>
               </label>
 
@@ -205,7 +234,7 @@ const AddBook = () => {
                     Your Information
                   </h3>
                   <p className="text-xs text-charcoal/55">
-                    Enter your details as the book contributor.
+                    Your account information is added automatically.
                   </p>
                 </div>
               </div>
@@ -219,10 +248,9 @@ const AddBook = () => {
 
                   <input
                     type="text"
-                    name="userName"
-                    placeholder="Enter your name"
-                    required
-                    className="w-full rounded-lg border border-charcoal/15 bg-white px-4 py-3 text-sm text-charcoal outline-none transition placeholder:text-charcoal/35 focus:border-brown"
+                    value={user?.name || ""}
+                    readOnly
+                    className="w-full rounded-lg border border-charcoal/15 bg-gray-100 px-4 py-3 text-sm text-charcoal outline-none"
                   />
                 </div>
 
@@ -234,10 +262,9 @@ const AddBook = () => {
 
                   <input
                     type="email"
-                    name="userEmail"
-                    placeholder="Enter your email"
-                    required
-                    className="w-full rounded-lg border border-charcoal/15 bg-white px-4 py-3 text-sm text-charcoal outline-none transition placeholder:text-charcoal/35 focus:border-brown"
+                    value={user?.email || ""}
+                    readOnly
+                    className="w-full rounded-lg border border-charcoal/15 bg-gray-100 px-4 py-3 text-sm text-charcoal outline-none"
                   />
                 </div>
               </div>
@@ -246,7 +273,7 @@ const AddBook = () => {
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || isPending || !user}
                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-charcoal px-6 py-4 text-sm font-bold text-white shadow-md transition duration-300 hover:bg-brown disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? (
@@ -267,7 +294,6 @@ const AddBook = () => {
                 Thank you for sharing your love of books with our community.
               </p>
             </div>
-
           </form>
         </div>
       </div>
