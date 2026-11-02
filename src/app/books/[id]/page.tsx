@@ -2,6 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import BorrowingCard from "@/components/borrowed-books/borrowingCard";
 
 type Book = {
   _id: string;
@@ -34,7 +35,7 @@ const BooksDetailsPage = async ({
           </h2>
 
           <p className="mt-3 text-sm text-charcoal/60">
-            Sorry, we couldn't find this book.
+            Sorry, we couldnt find this book.
           </p>
 
           <Link
@@ -153,14 +154,8 @@ const BooksDetailsPage = async ({
             </div>
 
             {/* Borrow Button */}
-            <button
-              type="button"
-              disabled
-              className="mt-8 w-full cursor-not-allowed rounded-xl bg-charcoal px-6 py-4 text-sm font-semibold text-white opacity-70"
-            >
-              Borrow This Book
-            </button>
-
+<BorrowingCard book={book} />
+            
             <p className="mt-3 text-center text-xs text-charcoal/45">
               Borrowing will be available once the Borrow System is connected.
             </p>

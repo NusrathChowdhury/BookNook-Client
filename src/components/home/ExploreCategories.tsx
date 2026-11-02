@@ -2,20 +2,18 @@
 import Link from "next/link";
 import {
   BookOpen,
-  Heart,
-  Brain,
-  Compass,
-  Search,
-  Sparkles,
+  FlaskConical,
+  Landmark,
+  Baby,
+  LibraryBig,
 } from "lucide-react";
 
 const categories = [
   { name: "Fiction", icon: BookOpen },
-  { name: "Romance", icon: Heart },
-  { name: "Self Development", icon: Brain },
-  { name: "Adventure", icon: Compass },
-  { name: "Mystery", icon: Search },
-  { name: "Lifestyle", icon: Sparkles },
+  { name: "Science", icon: FlaskConical },
+  { name: "History", icon: Landmark },
+  { name: "Kids", icon: Baby },
+  { name: "Others", icon: LibraryBig },
 ];
 
 export default function ExploreCategories() {
@@ -36,13 +34,13 @@ export default function ExploreCategories() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-5">
           {categories.map((category) => {
             const Icon = category.icon;
 
             return (
               <Link
-                href="/books"
+                href={`/books?category=${encodeURIComponent(category.name)}`}
                 key={category.name}
                 className="group rounded-xl border border-[#25231F]/10 bg-[#F7F3EE] p-6 text-center transition hover:-translate-y-1 hover:border-[#B58A62] hover:shadow-md"
               >

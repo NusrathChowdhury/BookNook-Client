@@ -23,25 +23,22 @@ const AllBooksPage = async ({
   const books: Book[] = await res.json();
   console.log(books);
 
-  const { category, search } = await searchParams;
+  const { search } = await searchParams;
+
+  const searchText = search?.trim().toLowerCase();
 
   const filteredBooks = books.filter((book) => {
-    const matchesCategory =
-      !category ||
-      book.category?.toLowerCase() === category.toLowerCase();
-
-    const matchesSearch =
-      !search ||
-      book.title?.toLowerCase().includes(search.toLowerCase()) ||
-      book.author?.toLowerCase().includes(search.toLowerCase());
-
-    return matchesCategory && matchesSearch;
+    return (
+      !searchText ||
+      book.title?.toLowerCase().includes(searchText) ||
+      book.author?.toLowerCase().includes(searchText) ||
+      book.category?.toLowerCase().includes(searchText)
+    );
   });
 
   return (
     <main className="min-h-screen bg-cream px-5 py-14 sm:px-8">
       <div className="mx-auto max-w-7xl">
-
         {/* Heading */}
         <div className="mb-12 text-center">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-brown">
@@ -66,19 +63,11 @@ const AllBooksPage = async ({
           method="GET"
           className="mx-auto mb-10 flex max-w-2xl flex-col gap-3 sm:flex-row"
         >
-          {category && (
-            <input
-              type="hidden"
-              name="category"
-              value={category}
-            />
-          )}
-
           <input
             type="text"
             name="search"
             defaultValue={search || ""}
-            placeholder="Search by book title or author..."
+            placeholder="Search by title, author or category..."
             className="w-full rounded-xl border border-charcoal/10 bg-white px-5 py-3 text-sm text-charcoal outline-none transition placeholder:text-charcoal/40 focus:border-brown"
           />
 
@@ -94,15 +83,15 @@ const AllBooksPage = async ({
         <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="font-serif text-2xl font-bold text-charcoal">
-              {category || "All Books"}
+              All Books
             </h2>
 
-            {(category || search) && (
+            {search && (
               <Link
                 href="/books"
                 className="mt-2 inline-block text-sm font-medium text-brown underline underline-offset-4"
               >
-                Clear filters
+                Clear search
               </Link>
             )}
           </div>
@@ -120,8 +109,8 @@ const AllBooksPage = async ({
             </h3>
 
             <p className="mt-3 text-sm text-charcoal/60">
-              {search || category
-                ? "No books match your search or selected category. Try another search."
+              {search
+                ? "No books match your search. Try another title, author or category."
                 : "No books have been added yet. Be the first to share a book!"}
             </p>
           </div>
@@ -174,7 +163,6 @@ const AllBooksPage = async ({
                     </p>
                   </div>
 
-                  {/* View Details Button */}
                   <Link
                     href={`/books/${book._id}`}
                     className="mt-5 flex w-full items-center justify-center rounded-xl bg-charcoal px-5 py-3 text-sm font-semibold text-white transition duration-300 hover:bg-brown"
