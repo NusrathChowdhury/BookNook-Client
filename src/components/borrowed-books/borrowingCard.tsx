@@ -4,7 +4,18 @@
 import React, { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
-const BorrowingCard = ({ book }) => {
+type Book = {
+  _id: string;
+  title: string;
+  image: string;
+  availableCopies?: number;
+};
+
+type BorrowingCardProps = {
+  book: Book;
+};
+
+const BorrowingCard = ({ book }: BorrowingCardProps) => {
   const { data: session } = authClient.useSession();
   const user = session?.user;
 
@@ -16,7 +27,9 @@ const BorrowingCard = ({ book }) => {
     typeof book.availableCopies === "number" &&
     book.availableCopies <= 0;
 
-  const handleBorrow = async (e) => {
+  const handleBorrow = async (
+    e: React.SubmitEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
 
     if (!user) {
@@ -47,6 +60,8 @@ const BorrowingCard = ({ book }) => {
       status: "borrowed",
     };
 
+    console.log("Borrow data from frontend:", data);
+
     try {
       const res = await fetch("http://localhost:5000/borrowed-books", {
         method: "POST",
@@ -58,14 +73,26 @@ const BorrowingCard = ({ book }) => {
 
       const borrowedBooks = await res.json();
 
+      console.log("Backend response:", borrowedBooks);
+
       if (!res.ok) {
-        throw new Error(borrowedBooks.message || "Borrowing failed.");
+        throw new Error(
+          borrowedBooks.message || "Borrowing failed."
+        );
       }
+
+      console.log("Borrowing successful!");
 
       setMessage("Book borrowed successfully!");
       setIsOpen(false);
     } catch (error) {
-      setMessage(error.message || "Something went wrong.");
+      console.log("Borrow error:", error);
+
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong."
+      );
     } finally {
       setLoading(false);
     }
