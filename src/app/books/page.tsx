@@ -1,6 +1,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 type Book = {
   _id: string;
@@ -12,6 +13,7 @@ type Book = {
   userName: string;
   userEmail: string;
   createdAt?: string;
+  dateAdded?: string;
 };
 
 const AllBooksPage = async ({
@@ -123,10 +125,13 @@ const AllBooksPage = async ({
               >
                 {/* Book Image */}
                 <div className="relative flex h-64 items-center justify-center overflow-hidden bg-[#F3EEE7] p-5">
-                  <img
+                  <Image
                     src={book.image}
                     alt={book.title}
+                    width={300}
+                    height={400}
                     className="h-full w-full object-contain transition duration-500 group-hover:scale-105"
+                    style={{ width: "auto", height: "100%" }}
                   />
 
                   <span className="absolute left-4 top-4 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-brown shadow-sm">
@@ -157,8 +162,10 @@ const AllBooksPage = async ({
                     </p>
 
                     <p className="mt-1 text-xs text-charcoal/40">
-                      {book.createdAt
-                        ? new Date(book.createdAt).toLocaleDateString()
+                      {book.dateAdded || book.createdAt
+                        ? new Date(
+                            book.dateAdded || book.createdAt!
+                          ).toLocaleDateString()
                         : "Date unavailable"}
                     </p>
                   </div>

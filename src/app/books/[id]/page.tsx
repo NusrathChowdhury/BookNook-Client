@@ -14,6 +14,7 @@ type Book = {
   userName: string;
   userEmail: string;
   createdAt?: string;
+  dateAdded?: string;
   totalCopies: number;
 };
 
@@ -53,7 +54,6 @@ const BooksDetailsPage = async ({
   return (
     <main className="min-h-screen bg-cream px-5 py-12 sm:px-8 sm:py-16">
       <div className="mx-auto max-w-7xl">
-
         {/* Back Link */}
         <Link
           href="/books"
@@ -65,7 +65,6 @@ const BooksDetailsPage = async ({
 
         {/* Book Details Card */}
         <div className="grid overflow-hidden rounded-3xl border border-charcoal/5 bg-white shadow-lg md:grid-cols-[0.9fr_1.1fr]">
-
           {/* Book Image Section */}
           <div className="flex min-h-[550px] items-center justify-center bg-[#F0EAE2] p-8 sm:min-h-[650px] sm:p-12 lg:p-14">
             <div className="relative h-[460px] w-full max-w-[340px] sm:h-[520px]">
@@ -82,7 +81,6 @@ const BooksDetailsPage = async ({
 
           {/* Book Information Section */}
           <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
-
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-brown">
               Welcome to BookNook
             </p>
@@ -146,8 +144,10 @@ const BooksDetailsPage = async ({
                 <p className="text-xs text-charcoal/50">
                   Added on:{" "}
                   <span className="font-medium text-charcoal/70">
-                    {book.createdAt
-                      ? new Date(book.createdAt).toLocaleDateString()
+                    {(book.dateAdded || book.createdAt)
+                      ? new Date(
+                          book.dateAdded || book.createdAt!
+                        ).toLocaleDateString()
                       : "Date unavailable"}
                   </span>
                 </p>
@@ -181,7 +181,6 @@ const BooksDetailsPage = async ({
             <span>→</span>
           </Link>
         </div>
-
       </div>
     </main>
   );
