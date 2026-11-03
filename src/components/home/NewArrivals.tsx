@@ -1,74 +1,53 @@
 
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const books = [
-  {
-    id: "book-1",
-    title: "Atomic Habits",
-    author: "James Clear",
-    category: "Self Development",
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=600",
-    createdAt: "2026-10-30",
-  },
-  {
-    id: "book-2",
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    category: "Classic Fiction",
-    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600",
-    createdAt: "2026-10-28",
-  },
-  {
-    id: "book-3",
-    title: "The Silent Patient",
-    author: "Alex Michaelides",
-    category: "Mystery",
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600",
-    createdAt: "2026-10-25",
-  },
-  {
-    id: "book-4",
-    title: "Pride and Prejudice",
-    author: "Jane Austen",
-    category: "Romance",
-    image: "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=600",
-    createdAt: "2026-10-22",
-  },
-  {
-    id: "book-5",
-    title: "The Alchemist",
-    author: "Paulo Coelho",
-    category: "Adventure",
-    image: "https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=600",
-    createdAt: "2026-10-20",
-  },
-  {
-    id: "book-6",
-    title: "Ikigai",
-    author: "Hector Garcia",
-    category: "Lifestyle",
-    image: "https://images.unsplash.com/photo-1513001900722-370f803f498d?w=600",
-    createdAt: "2026-10-18",
-  },
-  {
-    id: "book-7",
-    title: "The Psychology of Money",
-    author: "Morgan Housel",
-    category: "Finance",
-    image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600",
-    createdAt: "2026-10-15",
-  },
-];
-
-const newArrivals = [...books]
-  .sort(
-    (a, b) =>
-      new Date(b.createdAt).getTime() -
-      new Date(a.createdAt).getTime()
-  )
-  .slice(0, 6);
+type Book = {
+  _id: string;
+  title: string;
+  author: string;
+  category: string;
+  image: string;
+  dateAdded?: string;
+  createdAt?: string;
+};
 
 export default function NewArrivals() {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNewArrivals = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/books");
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch books");
+        }
+
+        const data = await res.json();
+
+        const latestBooks = [...data]
+          .sort(
+            (a: Book, b: Book) =>
+              new Date(b.dateAdded || b.createdAt || 0).getTime() -
+              new Date(a.dateAdded || a.createdAt || 0).getTime()
+          )
+          .slice(0, 6);
+
+        setBooks(latestBooks);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNewArrivals();
+  }, []);
+
   return (
     <section className="px-5 py-20">
       <div className="mx-auto max-w-7xl">
@@ -86,43 +65,67 @@ export default function NewArrivals() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
-          {newArrivals.map((book) => (
-            <div
-              key={book.id}
-              className="overflow-hidden rounded-xl border border-[#25231F]/5 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
-            >
-              <div className="h-64 overflow-hidden bg-[#EFE8DE]">
-                <img
-                  src={book.image}
-                  alt={book.title}
-                  className="h-full w-full object-cover transition duration-500 hover:scale-105"
-                />
-              </div>
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <p className="text-sm text-[#77716A]">
+              Loading new arrivals...
+            </p>
+          </div>
+        ) : books.length === 0 ? (
+          <div className="py-16 text-center">
+            <p className="text-[#77716A]">
+              No books available yet.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
+            {books.map((book) => {
+              const bookDate = book.dateAdded || book.createdAt;
 
-              <div className="p-6">
-                <span className="rounded-full bg-[#F7F3EE] px-3 py-1 text-xs font-medium text-[#9A7250]">
-                  {book.category}
-                </span>
-
-                <h3 className="mt-4 font-serif text-xl font-bold text-[#25231F]">
-                  {book.title}
-                </h3>
-
-                <p className="mt-2 text-sm text-[#77716A]">
-                  By {book.author}
-                </p>
-
-                <Link
-                  href={`/books/${book.id}`}
-                  className="mt-6 inline-block border-b border-[#B58A62] pb-1 text-sm font-semibold text-[#9A7250] hover:text-[#25231F]"
+              return (
+                <div
+                  key={book._id}
+                  className="overflow-hidden rounded-xl border border-[#25231F]/5 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  View Details →
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+                  <div className="h-64 overflow-hidden bg-[#EFE8DE]">
+                    <img
+                      src={book.image}
+                      alt={book.title}
+                      className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                    />
+                  </div>
+
+                  <div className="p-6">
+                    <span className="rounded-full bg-[#F7F3EE] px-3 py-1 text-xs font-medium text-[#9A7250]">
+                      {book.category}
+                    </span>
+
+                    <h3 className="mt-4 font-serif text-xl font-bold text-[#25231F]">
+                      {book.title}
+                    </h3>
+
+                    <p className="mt-2 text-sm text-[#77716A]">
+                      By {book.author}
+                    </p>
+
+                    <p className="mt-2 text-xs text-[#9A7250]">
+                      {bookDate
+                        ? `Added on ${new Date(bookDate).toLocaleDateString()}`
+                        : "Date unavailable"}
+                    </p>
+
+                    <Link
+                      href={`/books/${book._id}`}
+                      className="mt-6 inline-block border-b border-[#B58A62] pb-1 text-sm font-semibold text-[#9A7250] hover:text-[#25231F]"
+                    >
+                      View Details →
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         <div className="mt-12 text-center">
           <Link

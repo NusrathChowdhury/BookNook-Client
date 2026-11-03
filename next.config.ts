@@ -6,13 +6,17 @@ const nextConfig: NextConfig = {
   reactCompiler: false,
 
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "covers.openlibrary.org",
-      },
-    ],
-  },
+  remotePatterns: [
+    {
+      protocol: "https",
+      hostname: "covers.openlibrary.org",
+    },
+    {
+      protocol: "https",
+      hostname: "m.media-amazon.com",
+    },
+  ],
+},
 
   turbopack: {
     rules: {
