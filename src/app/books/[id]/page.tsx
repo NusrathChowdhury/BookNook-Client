@@ -3,6 +3,9 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import BorrowingCard from "@/components/borrowed-books/borrowingCard";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 type Book = {
   _id: string;
@@ -24,8 +27,21 @@ const BooksDetailsPage = async ({
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
+  
+  const token=await getTokenFromServer();
 
-  const res = await fetch(`http://localhost:5000/books/${id}`);
+ const res = await fetch(`http://localhost:5000/books/${id}`, {
+  headers: {
+    authorization: `Bearer ${token}`, 
+  },
+})
+  
+  if (!res.ok) {
+  const errorText = await res.text();
+  console.log("Status:", res.status);
+  console.log("Backend error:", errorText);
+  throw new Error("Failed to fetch book details");
+}
   const book: Book = await res.json();
 
   if (!res.ok || !book) {

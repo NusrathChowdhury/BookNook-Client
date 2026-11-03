@@ -21,7 +21,7 @@ const AllBooksPage = async ({
 }: {
   searchParams: Promise<{ category?: string; search?: string }>;
 }) => {
-  const res = await fetch("http://localhost:5000/add-book");
+  const res = await fetch("http://localhost:5000/books");
   const books: Book[] = await res.json();
   console.log(books);
 

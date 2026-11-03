@@ -29,12 +29,23 @@ const MyBorrowsPage = () => {
 
     const getBorrowedBooks = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:5000/MyBorrows/${user.email}`
-        );
+        const { data, error } = await authClient.token();
 
-        const data = await res.json();
-        setBorrowedBooks(data);
+        if (error || !data?.token) {
+          throw new Error("Unable to get JWT");
+        }
+
+        const res = await fetch("http://localhost:5000/borrows", {
+          headers: {
+            Authorization: `Bearer ${data.token}`,
+          },
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) throw new Error("Failed to fetch borrowed books");
+
+        setBorrowedBooks(result);
       } catch (error) {
         console.log("Fetch error:", error);
       } finally {
@@ -53,12 +64,22 @@ const MyBorrowsPage = () => {
     if (!confirmReturn) return;
 
     try {
-      const res = await fetch(
-        `http://localhost:5000/MyBorrows/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+  const { data, error } = await authClient.token();
+
+  if (error || !data?.token) {
+    throw new Error("Unable to get JWT");
+  }
+
+  const res = await fetch(
+    `http://localhost:5000/borrows/${id}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${data.token}`,
+      },
+    }
+  );
+
 
       const result = await res.json();
 

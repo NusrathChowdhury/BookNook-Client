@@ -63,10 +63,14 @@ const BorrowingCard = ({ book }: BorrowingCardProps) => {
     console.log("Borrow data from frontend:", data);
 
     try {
-      const res = await fetch("http://localhost:5000/borrowed-books", {
+      const { data: tokenData } = await authClient.token();
+      const token = tokenData?.token;
+
+      const res = await fetch("http://localhost:5000/borrows", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });

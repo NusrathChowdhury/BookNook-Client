@@ -108,14 +108,7 @@ export default function Navbar() {
                   </div>
 
                   {/* My Profile */}
-                  <Link
-                    href="/profile"
-                    onClick={() => setDropdownOpen(false)}
-                    className="mt-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#25231F] transition hover:bg-[#F7F3EE] hover:text-[#B58A62]"
-                  >
-                    <UserRound size={17} />
-                    My Profile
-                  </Link>
+                 
 
                   {/* Logout */}
                   <button
@@ -198,14 +191,7 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                <Link
-                  href="/profile"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-2 font-medium text-[#25231F] hover:text-[#B58A62]"
-                >
-                  <UserRound size={18} />
-                  My Profile
-                </Link>
+                
 
                 <button
                   onClick={handleLogout}

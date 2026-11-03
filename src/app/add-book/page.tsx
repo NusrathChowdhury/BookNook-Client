@@ -46,16 +46,20 @@ const AddBook = () => {
         userEmail: user.email,
       };
 
-      const res = await fetch("http://localhost:5000/add-book", {
+      const { data: tokenData } = await authClient.token();
+      const token = tokenData?.token;
+
+      const res = await fetch("http://localhost:5000/books", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(bookData),
       });
 
-      const data = await res.json();
-      console.log(data);
+      const result = await res.json();
+      console.log(result);
 
       if (!res.ok) {
         throw new Error("Failed to add book");
