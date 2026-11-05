@@ -362,7 +362,7 @@ Deployment information will be updated after production hosting is completed.
 | Server | Render | Pending |
 | Database | MongoDB Atlas | Configuration dependent |
 
-## 🔗 Project Links
+## 🔗 Project Links  : https://booknook-frontend-six.vercel.app
 
 | Resource | Link |
 |---|---|
