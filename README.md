@@ -366,7 +366,7 @@ Deployment information will be updated after production hosting is completed.
 
 | Resource | Link |
 |---|---|
-| 🌍 Live Website | Coming Soon |
+| 🌍 Live Website |https://booknook-frontend-six.vercel.app |
 | 💻 Client Repository | Add Client GitHub URL |
 | ⚙️ Server Repository | Add Server GitHub URL |
 
